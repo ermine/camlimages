@@ -20,10 +20,15 @@ let pkg_config pkg_name =
   with End_of_file ->
     None
 
-let default_dirs = [
-  "/usr/include", "/usr/lib";
-  "/usr/local/include", "/usr/local/lib"
-]
+(* TODO
+let env_cflags = try Some (Sys.getenv "CFLAGS") with Not_foud -> None
+let env_libs = try Some (Sys.getenv "LIBS") with Not_found -> None
+*)    
+
+let default_dirs =
+  ["/usr/include", "/usr/lib";
+   "/usr/local/include", "/usr/local/lib"
+  ]
 
 let search_in_default_dirs include_file =
   let rec aux_search = function
@@ -36,15 +41,21 @@ let search_in_default_dirs include_file =
   in
     aux_search default_dirs
 
-let check pkg_name include_file dlflags =
+let check pkg_config_support pkg_name include_file dlflags =
   let cflags, lflags =
-    match pkg_config pkg_name with
-      | Some r -> r
-      | None ->
-          match search_in_default_dirs include_file with
-            | Some (i, l) -> (i, l ^ " " ^ dlflags)
-            | None ->
-                raise Not_found
+    let r =
+      if pkg_config_support then
+        pkg_config pkg_name
+      else
+        None
+    in
+      match r with
+        | Some r -> r
+        | None ->
+            match search_in_default_dirs include_file with
+              | Some (i, l) -> (i, l ^ " " ^ dlflags)
+              | None ->
+                  raise Not_found
   in
     cflags, lflags
 
@@ -71,6 +82,21 @@ let get_path_gs () =
 let var_set name value =
   sprintf "%s=\"%s\"\n" name value
 
+let check_pkg_config () =
+  Printf.printf "Checking for pkg-config: ";
+  let r =
+    try
+      let ic = Unix.open_process_in "pkg-config --version" in
+      let line = input_line ic in
+        if line = "0.25" then
+          true
+        else
+          false
+    with _ -> false
+  in
+    Printf.printf "%s\n" (string_of_bool r);
+    r
+  
 let _ =
   let libs =
     [enabled_freetype, "freetype2", "ft2build.h", "libfreetype.so";
@@ -81,13 +107,14 @@ let _ =
      enabled_xpm, "xpm", "xpm.h", "-lXpm -lX11"
     ]
   in
+  let pkg_config_support = check_pkg_config () in
   let r = List.fold_left
     (fun acc (flag, name, ifile, lf) ->
        if flag then (
          Printf.printf "Checking for %s support... " name;
          let r =
            try
-             Some (check name ifile lf)
+             Some (check pkg_config_support name ifile lf)
            with Not_found -> None
          in
            match r with
@@ -102,8 +129,9 @@ let _ =
                  flush stdout;
                  failwith ("Please provide --disable-" ^ name ^
                              " in configure arguments");
-                 flush stdout;
+                 (*
                  (false, name, "", "") :: acc
+                 *)
        )
        else
          acc
