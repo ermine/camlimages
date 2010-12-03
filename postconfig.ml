@@ -87,11 +87,8 @@ let check_pkg_config () =
   let r =
     try
       let ic = Unix.open_process_in "pkg-config --version" in
-      let line = input_line ic in
-        if line = "0.25" then
-          true
-        else
-          false
+      let _line = input_line ic in
+        true
     with _ -> false
   in
     Printf.printf "%s\n" (string_of_bool r);
@@ -99,12 +96,12 @@ let check_pkg_config () =
   
 let _ =
   let libs =
-    [enabled_freetype, "freetype2", "ft2build.h", "libfreetype.so";
-     enabled_png, "libpng", "phg.h", "-lpng -lz";
+    [enabled_freetype, "freetype2", "ft2build.h", "-lfreetype";
+     enabled_png, "libpng", "png.h", "-lpng -lz";
      enabled_jpeg, "jpeg", "jpeglib.h", "-ljpeg";
      enabled_gif, "gif", "gif_lib.h", "-lungif";
      enabled_tiff, "tiff", "tiff.h", "-ltiff";
-     enabled_xpm, "xpm", "xpm.h", "-lXpm -lX11"
+     enabled_xpm, "xpm", "X11/xpm.h", "-lXpm -lX11"
     ]
   in
   let pkg_config_support = check_pkg_config () in

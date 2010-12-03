@@ -1,16 +1,26 @@
 <src/png/*.c>: pkg_libpng_cflags
-<src/jpeg/*.c>: pkg_jpeg_cflags
-<src/gif/*.c>: pkg_gif_cflags
-<src/tiff/*.c>: pkg_tiff_cflags
-<src/xpm/*.c>: pkg_xpm_cflags
-<src/freetype/*.c>: pkg_freetype2_cflags
+<src/png/*.a>: pkg_libpng_lflags, ocamlmklib
+<src/png/*.cm{x,}a>: pkg_libpng_lflags
 
-<src/png/*.{a,cma,cmxa}>: pkg_libpng_lflags
-<src/jpeg/*.{a,cma,cmxa}>: pkg_jpeg_lflags
-<src/gif/*.{a,cma,cmxa}>: pkg_gif_lflags
-<src/tiff/*.{a,cma,cmxa}>: pkg_tiff_lflags
-<src/xpm/*.{a,cma,cmxa}>: pkg_xpm_lflags
-<src/freetype/*.{a,cma,cmxa}>: pkg_freetype2_lflags
+<src/jpeg/*.c>: pkg_jpeg_cflags
+<src/jpeg/*.a>: pkg_jpeg_lflags, ocamlmklib
+<src/jpeg/*.cm{x,}a>: pkg_jpeg_lflags
+
+<src/gif/*.c>: pkg_gif_cflags
+<src/gif/*.a>: pkg_gif_lflags, ocamlmklib
+<src/gif/*.cm{x,}a>: pkg_gif_lflags
+
+<src/tiff/*.c>: pkg_tiff_cflags
+<src/tiff/*.a>: pkg_tiff_lflags, ocamlmklib
+<src/tiff/*.cm{x,}a>: pkg_tiff_lflags
+
+<src/xpm/*.c>: pkg_xpm_cflags
+<src/xpm/*.a>: pkg_xpm_lflags, ocamlmklib
+<src/xpm/*.cm{x,}a>: pkg_xpm_lflags
+
+<src/freetype/*.c>: pkg_freetype2_cflags
+<src/freetype/*.a>: pkg_freetype2_lflags, ocamlmklib
+<src/freetype/*.cm{x,}a>: pkg_freetype2_lflags
 
 # OASIS_START
 # DO NOT EDIT (digest: 5e463078e35e89cb4d9d2f02b3caa632)

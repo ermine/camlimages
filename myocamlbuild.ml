@@ -529,13 +529,12 @@ let my_dispatch =
               flag ["c"; "compile"; pkg_name_cflags] &
                 S(List.map (fun path -> S[A"-ccopt"; A path]) cflags);
             if lflags <> []  then (
-              flag [pkg_name_lflags; "ocamlmklib"] &
+              flag ["ocamlmklib"; "c"; pkg_name_lflags] &
+                S(List.map (fun path -> A path) lflags);
+              flag [pkg_name_lflags; "ocaml"; "library"; "link"] &
                 S(List.map (fun path -> S[A"-cclib"; A path]) lflags);
-              flag [pkg_name_lflags; "ocaml"; "library"; "link"; "native"] &
-                S(List.map (fun path -> S[A"-cclib"; A path]) lflags);
-              flag [pkg_name_lflags; "ocaml"; "library"; "link"; "byte"] &
-                S(List.map (fun path -> S[A"-cclib"; A path]) lflags)
             )
+
       | _ -> ()
   in          
     
