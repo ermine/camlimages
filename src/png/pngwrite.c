@@ -2,7 +2,7 @@
 /*                                                                     */
 /*                           Objective Caml                            */
 /*                                                                     */
-/*            François Pessaux, projet Cristal, INRIA Rocquencourt     */
+/*            Franois Pessaux, projet Cristal, INRIA Rocquencourt     */
 /*            Pierre Weis, projet Cristal, INRIA Rocquencourt          */
 /*            Jun Furuse, projet Cristal, INRIA Rocquencourt           */
 /*                                                                     */
@@ -11,12 +11,6 @@
 /*  Distributed only by permission.                                    */
 /*                                                                     */
 /***********************************************************************/
-
-/* $Id: Exp */
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include <caml/mlvalues.h>
 #include <caml/alloc.h>
@@ -50,14 +44,14 @@ CAMLprim value write_png_file_rgb(value fd, value buffer, value width,
     failwith("png_create_write_struct");
   }
 
-  if( (info_ptr = png_create_info_struct(png_ptr)) == NULL ){
+  if((info_ptr = png_create_info_struct(png_ptr)) == NULL ){
     fclose(fp);
     png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
     failwith("png_create_info_struct");
   }
 
   /* error handling */
-  if (setjmp(png_ptr->jmpbuf)) {
+  if (setjmp(png_jmpbuf(png_ptr))) {
     /* Free all of the memory associated with the png_ptr and info_ptr */
     png_destroy_write_struct(&png_ptr, &info_ptr);
     fclose(fp);
@@ -69,11 +63,11 @@ CAMLprim value write_png_file_rgb(value fd, value buffer, value width,
   png_init_io(png_ptr, fp);
 
   /* we use system default compression */
-  /* png_set_filter( png_ptr, 0, PNG_FILTER_NONE |
+  /* png_set_filter(png_ptr, 0, PNG_FILTER_NONE |
      PNG_FILTER_SUB | PNG_FILTER_PAETH ); */
   /* png_set_compression...() */
 
-  png_set_IHDR( png_ptr, info_ptr, w, h,
+  png_set_IHDR(png_ptr, info_ptr, w, h,
                 8 /* fixed */,
                 a ? PNG_COLOR_TYPE_RGB_ALPHA : PNG_COLOR_TYPE_RGB, /* fixed */
                 PNG_INTERLACE_ADAM7,
@@ -111,17 +105,17 @@ CAMLprim value write_png_file_rgb(value fd, value buffer, value width,
   CAMLreturn(Val_unit);
 }
 
-void PngPalette_val( value cmap, png_colorp *pltep, int *lenp )
+void PngPalette_val(value cmap, png_colorp *pltep, int *lenp )
 {
   int i;
 
-  if( cmap == Atom(0) ){
+  if(cmap == Atom(0) ){
     *pltep = NULL;
     *lenp = 0;
     return;
   }
-  *lenp = Wosize_val( cmap );
-  *pltep = malloc( sizeof( png_color ) * *lenp );
+  *lenp = Wosize_val(cmap );
+  *pltep = malloc(sizeof(png_color ) * *lenp );
 
   for(i=0; i< *lenp; i++){
     (*pltep)[i].red = Int_val(Field(Field(cmap,i),0));
@@ -144,7 +138,7 @@ CAMLprim value write_png_file_index(value fd, value buffer, value cmap,
   w = Int_val(width);
   h = Int_val(height);
 
-  if (( fp = fdopen(Int_val(fd), "wb")) == NULL ){
+  if ((fp = fdopen(Int_val(fd), "wb")) == NULL ){
     failwith("png file open failed");
   }
 
@@ -154,14 +148,14 @@ CAMLprim value write_png_file_index(value fd, value buffer, value cmap,
     failwith("png_create_write_struct");
   }
 
-  if( (info_ptr = png_create_info_struct(png_ptr)) == NULL ){
+  if((info_ptr = png_create_info_struct(png_ptr)) == NULL ){
     fclose(fp);
     png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
     failwith("png_create_info_struct");
   }
 
   /* error handling */
-  if (setjmp(png_ptr->jmpbuf)) {
+  if (setjmp(png_jmpbuf(png_ptr))) {
     /* Free all of the memory associated with the png_ptr and info_ptr */
     png_destroy_write_struct(&png_ptr, &info_ptr);
     fclose(fp);
@@ -173,11 +167,11 @@ CAMLprim value write_png_file_index(value fd, value buffer, value cmap,
   png_init_io(png_ptr, fp);
 
   /* we use system default compression */
-  /* png_set_filter( png_ptr, 0, PNG_FILTER_NONE |
+  /* png_set_filter(png_ptr, 0, PNG_FILTER_NONE |
      PNG_FILTER_SUB | PNG_FILTER_PAETH ); */
   /* png_set_compression...() */
 
-  png_set_IHDR( png_ptr, info_ptr, w, h,
+  png_set_IHDR(png_ptr, info_ptr, w, h,
                 8 /* fixed */,
                 PNG_COLOR_TYPE_PALETTE, /* fixed */
                 PNG_INTERLACE_ADAM7,
@@ -188,15 +182,15 @@ CAMLprim value write_png_file_index(value fd, value buffer, value cmap,
     png_colorp palette;
     int num_palette;
 
-    PngPalette_val( cmap, &palette, &num_palette );
+    PngPalette_val(cmap, &palette, &num_palette );
 
-    if( num_palette <= 0 ){
+    if(num_palette <= 0 ){
       png_destroy_write_struct(&png_ptr, &info_ptr);
       fclose(fp);
       /* If we get here, we had a problem writing the file */
       failwith("png write error (null colormap)");
     }
-    png_set_PLTE( png_ptr, info_ptr, palette, num_palette );
+    png_set_PLTE(png_ptr, info_ptr, palette, num_palette );
   }
 
   /* infos... */
@@ -215,7 +209,7 @@ CAMLprim value write_png_file_index(value fd, value buffer, value cmap,
     printf("rowbytes= %d width=%d\n", rowbytes, w);
 #endif
 
-    if( rowbytes != w && rowbytes != w * 2 ){
+    if(rowbytes != w && rowbytes != w * 2){
       png_destroy_write_struct(&png_ptr, &info_ptr);
       fclose(fp);
       /* If we get here, we had a problem writing the file */

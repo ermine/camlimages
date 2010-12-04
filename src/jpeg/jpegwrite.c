@@ -2,7 +2,7 @@
 /*                                                                     */
 /*                           Objective Caml                            */
 /*                                                                     */
-/*            François Pessaux, projet Cristal, INRIA Rocquencourt     */
+/*            Franois Pessaux, projet Cristal, INRIA Rocquencourt     */
 /*            Pierre Weis, projet Cristal, INRIA Rocquencourt          */
 /*            Jun Furuse, projet Cristal, INRIA Rocquencourt           */
 /*                                                                     */
@@ -11,9 +11,6 @@
 /*  Distributed only by permission.                                    */
 /*                                                                     */
 /***********************************************************************/
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include <caml/mlvalues.h>
 #include <caml/alloc.h>
@@ -47,13 +44,11 @@ struct my_error_mgr {
 typedef struct my_error_mgr * my_error_ptr;
 extern void my_error_exit (j_common_ptr);
 
-GLOBAL(value)
-write_JPEG_file (value file,
-                 value buffer,
-		 value width, 
-		 value height, 
-		 value qual)
-{
+CAMLprim value write_JPEG_file (value file,
+                                value buffer,
+                                value width, 
+                                value height, 
+                                value qual) {
   JSAMPLE *image_buffer;
   int image_height;
   int image_width;
@@ -81,7 +76,7 @@ write_JPEG_file (value file,
   JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
   int row_stride;		/* physical row width in image buffer */
 
-  image_buffer = String_val(buffer);
+  image_buffer = (JSAMPLE *) String_val(buffer);
   image_width = Int_val(width);
   image_height = Int_val(height);
   filename = String_val(file);
@@ -200,13 +195,11 @@ write_JPEG_file (value file,
  * source data using the JPEG code's internal virtual-array mechanisms.
  */
 
-value open_jpeg_file_for_write_colorspace( name, width, height, qual, colorspace )
-     value name;
-     value width;
-     value height;
-     value qual;
-     J_COLOR_SPACE colorspace;
-{
+value open_jpeg_file_for_write_colorspace(value name, 
+                                          value width, 
+                                          value height, 
+                                          value qual, 
+                                          J_COLOR_SPACE colorspace) {
   char *filename;
   int image_height;
   int image_width;
@@ -218,9 +211,9 @@ value open_jpeg_file_for_write_colorspace( name, width, height, qual, colorspace
   FILE * outfile;		/* source file */
   value res;
 
-  image_width= Int_val( width );
-  image_height= Int_val( height );
-  filename= String_val( name );
+  image_width= Int_val(width);
+  image_height= Int_val(height);
+  filename= String_val(name);
   quality= Int_val(qual);
  
   if ((outfile = fopen(filename, "wb")) == NULL) {
@@ -266,43 +259,35 @@ value open_jpeg_file_for_write_colorspace( name, width, height, qual, colorspace
   return res;
 }
 
-value open_jpeg_file_for_write( name, width, height, qual )
-     value name;
-     value width;
-     value height;
-     value qual;
-{
+CAMLprim value open_jpeg_file_for_write(value name,
+                                        value width,
+                                        value height,
+                                        value qual) {
   return
-    open_jpeg_file_for_write_colorspace( name, width, height, qual, JCS_RGB );
+    open_jpeg_file_for_write_colorspace(name, width, height, qual, JCS_RGB);
 }
 
-value open_jpeg_file_for_write_cmyk( name, width, height, qual )
-     value name;
-     value width;
-     value height;
-     value qual;
-{
+CAMLprim value open_jpeg_file_for_write_cmyk(value name,
+                                             value width,
+                                             value height,
+                                             value qual) {
   return
-    open_jpeg_file_for_write_colorspace( name, width, height, qual, JCS_CMYK );
+    open_jpeg_file_for_write_colorspace(name, width, height, qual, JCS_CMYK);
 }
 
-value write_jpeg_scanline( jpegh, buf )
-value jpegh, buf;
-{
+CAMLprim value write_jpeg_scanline(value jpegh, value buf) {
   struct jpeg_compress_struct *cinfop;
   JSAMPROW row[1];
 
-  cinfop = (struct jpeg_compress_struct *) Field( jpegh, 0 );
+  cinfop = (struct jpeg_compress_struct *) Field(jpegh, 0);
 
-  row[0] = String_val( buf );
+  row[0] = (JSAMPROW) String_val(buf);
 
-  jpeg_write_scanlines( cinfop, row, 1 );
+  jpeg_write_scanlines(cinfop, row, 1);
   return Val_unit;
 }
 
-value close_jpeg_file_for_write( jpegh )
-     value jpegh;
-{
+CAMLprim value close_jpeg_file_for_write(value jpegh) {
   struct jpeg_compress_struct *cinfop;
   struct my_error_mgr *jerrp;
   FILE *outfile;
@@ -312,26 +297,26 @@ value close_jpeg_file_for_write( jpegh )
   fflush(stderr);
 #endif
 
-  cinfop = (struct jpeg_compress_struct *) Field( jpegh, 0 );
-  outfile = (FILE *) Field( jpegh, 1 );
-  jerrp = (struct my_error_mgr *) Field( jpegh, 2 );
+  cinfop = (struct jpeg_compress_struct *) Field(jpegh, 0);
+  outfile = (FILE *) Field(jpegh, 1);
+  jerrp = (struct my_error_mgr *) Field(jpegh, 2);
 
 #ifdef DEBUG_JPEG
   fprintf(stderr, "cinfop= %d outfile= %d %d %d \n", cinfop, outfile, cinfop->next_scanline, cinfop->image_height); 
 #endif
 
-   if( cinfop->next_scanline >= cinfop->image_height ){ 
+   if(cinfop->next_scanline >= cinfop->image_height){ 
 #ifdef DEBUG_JPEG
      fprintf(stderr, "finish\n");
      fflush(stderr);
 #endif
-     jpeg_finish_compress( cinfop );
+     jpeg_finish_compress(cinfop);
    }
 #ifdef DEBUG_JPEG
   fprintf(stderr, "destroy\n");
   fflush(stderr);
 #endif
-  jpeg_destroy_compress( cinfop ); 
+  jpeg_destroy_compress(cinfop); 
   
   free(cinfop);
   free(jerrp);

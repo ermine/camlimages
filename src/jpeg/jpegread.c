@@ -2,7 +2,7 @@
 /*                                                                     */
 /*                           Objective Caml                            */
 /*                                                                     */
-/*            François Pessaux, projet Cristal, INRIA Rocquencourt     */
+/*            Franois Pessaux, projet Cristal, INRIA Rocquencourt     */
 /*            Pierre Weis, projet Cristal, INRIA Rocquencourt          */
 /*            Jun Furuse, projet Cristal, INRIA Rocquencourt           */
 /*                                                                     */
@@ -12,21 +12,15 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: jpegread.c,v 1.5 2009-10-16 16:08:33 weis Exp $ */
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <caml/mlvalues.h>
 #include <caml/alloc.h>
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-#include "oversized.h"
-
 #include <stdio.h>
 #include <string.h>
+
+#include "oversized.h"
 
 /*
  * Include file for users of JPEG library.
@@ -64,15 +58,13 @@ my_error_exit (j_common_ptr cinfo)
   /* Always display the message. */
   /* We could postpone this until after returning, if we chose. */
   fprintf(stderr,"setting message\n");
-  (*cinfo->err->format_message) (cinfo, jpg_error_message );
+  (*cinfo->err->format_message) (cinfo, jpg_error_message);
 
   /* Return control to the setjmp point */
   longjmp(myerr->setjmp_buffer, 1);
 }
 
-GLOBAL(value)
-read_JPEG_file (value name)
-{
+CAMLprim value read_JPEG_file(value name) {
   CAMLparam1(name);
   CAMLlocal1(res);
 
@@ -92,7 +84,7 @@ read_JPEG_file (value name)
   int row_stride;		/* physical row width in output buffer */
   int i;
 
-  filename= String_val( name );
+  filename= String_val(name);
 
   /* In this example we want to open the input file before doing anything else,
    * so that the setjmp() error recovery below can assume the file is open.
@@ -161,7 +153,7 @@ read_JPEG_file (value name)
    */ 
   /* JSAMPLEs per row in output buffer */
 
-  if( oversized(cinfo.output_width, cinfo.output_components) ){
+  if(oversized(cinfo.output_width, cinfo.output_components)){
     jpeg_destroy_decompress(&cinfo);
     fclose(infile);
     failwith_oversized("jpeg");
@@ -172,7 +164,7 @@ read_JPEG_file (value name)
   /* Make a one-row-high sample array that will go away when done with image */
   buffer = (*cinfo.mem->alloc_sarray)
 		((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 
-		 cinfo.output_height );
+		 cinfo.output_height);
 
   /* Step 6: while (scan lines remain to be read) */
   /*           jpeg_read_scanlines(...); */
@@ -188,7 +180,7 @@ read_JPEG_file (value name)
     jpeg_read_scanlines(&cinfo, buffer + cinfo.output_scanline, 1); 
   }
 
-  if( oversized(row_stride, cinfo.output_height) ){
+  if(oversized(row_stride, cinfo.output_height)){
     jpeg_destroy_decompress(&cinfo);
     fclose(infile);
     failwith_oversized("jpeg");
@@ -198,9 +190,9 @@ read_JPEG_file (value name)
     CAMLlocalN(r,3);
     r[0] = Val_int(cinfo.output_width);
     r[1] = Val_int(cinfo.output_height);
-    r[2] = alloc_string ( row_stride * cinfo.output_height );
+    r[2] = alloc_string (row_stride * cinfo.output_height);
     for(i=0; i<cinfo.output_height; i++){
-      memcpy( String_val(r[2]) + i * row_stride, 
+      memcpy(String_val(r[2]) + i * row_stride, 
 	       buffer[i], row_stride);
     }
     res = alloc_tuple(3);
@@ -234,22 +226,17 @@ read_JPEG_file (value name)
   CAMLreturn(res);
 }
 
-value jpeg_set_scale_denom( jpegh, denom )
-     value jpegh;
-     value denom;
-{
+CAMLprim value jpeg_set_scale_denom(value jpegh, value denom) {
   CAMLparam2(jpegh,denom);
   struct jpeg_decompress_struct *cinfop;
 
-  cinfop = (struct jpeg_decompress_struct *) Field ( jpegh, 0 );
+  cinfop = (struct jpeg_decompress_struct *) Field (jpegh, 0);
   cinfop->scale_num = 1;
-  cinfop->scale_denom = Int_val( denom );
+  cinfop->scale_denom = Int_val(denom);
   CAMLreturn(Val_unit);
 }
 
-value open_jpeg_file_for_read( name )
-     value name;
-{
+CAMLprim value open_jpeg_file_for_read(value name) {
   CAMLparam1(name);
   CAMLlocal1(res);
 
@@ -267,7 +254,7 @@ value open_jpeg_file_for_read( name )
   FILE * infile;		/* source file */
   int i;
 
-  filename= String_val( name );
+  filename= String_val(name);
 
   if ((infile = fopen(filename, "rb")) == NULL) {
     failwith("failed to open jpeg file");
@@ -323,9 +310,7 @@ value open_jpeg_file_for_read( name )
   CAMLreturn(res);
 }
 
-value open_jpeg_file_for_read_start( jpegh )
-     value jpegh;
-{
+CAMLprim value open_jpeg_file_for_read_start(value jpegh) {
   CAMLparam1(jpegh);
   CAMLlocal1(res);
   struct jpeg_decompress_struct* cinfop;
@@ -333,9 +318,9 @@ value open_jpeg_file_for_read_start( jpegh )
   FILE *infile;
   int i;
 
-  cinfop = (struct jpeg_decompress_struct *) Field( jpegh, 0 );
-  infile = (FILE *) Field( jpegh, 1 );
-  jerrp = (struct my_error_mgr *) Field( jpegh, 2 );
+  cinfop = (struct jpeg_decompress_struct *) Field(jpegh, 0);
+  infile = (FILE *) Field(jpegh, 1);
+  jerrp = (struct my_error_mgr *) Field(jpegh, 2);
 
   /* We can ignore the return value from jpeg_read_header since
    *   (a) suspension is not possible with the stdio data source, and
@@ -387,42 +372,38 @@ value open_jpeg_file_for_read_start( jpegh )
   CAMLreturn(res);
 }
 
-value read_jpeg_scanline( jpegh, buf, offset )
-value jpegh, offset, buf;
-{
+CAMLprim value read_jpeg_scanline(value jpegh, value buf, value offset) {
   CAMLparam3(jpegh,offset,buf);
   struct jpeg_decompress_struct *cinfop;
   JSAMPROW row[1];
 
-  cinfop = (struct jpeg_decompress_struct *) Field( jpegh, 0 );
-  row[0] = String_val( buf ) + Int_val( offset );
-  jpeg_read_scanlines( cinfop, row, 1 );
+  cinfop = (struct jpeg_decompress_struct *) Field(jpegh, 0);
+  row[0] = (JSAMPROW) String_val(buf) + Int_val(offset);
+  jpeg_read_scanlines(cinfop, row, 1);
 
   CAMLreturn(Val_unit);
 }
 
 /* no boundary checks */
-value read_jpeg_scanlines( value jpegh, value buf, value offset, value lines )
-{
-  CAMLparam4(jpegh,offset,buf,lines);
+CAMLprim value read_jpeg_scanlines(value jpegh, value buf, 
+                                   value offset, value lines) {
+  CAMLparam4(jpegh,offset, buf, lines);
   struct jpeg_decompress_struct *cinfop;
   JSAMPROW row[1];
   int clines = Int_val(lines);
   int i;
-  row[0] = String_val(buf) + Int_val(offset);
-  cinfop = (struct jpeg_decompress_struct *) Field( jpegh, 0 );
+  row[0] = (JSAMPROW) String_val(buf) + Int_val(offset);
+  cinfop = (struct jpeg_decompress_struct *) Field(jpegh, 0);
   // width is NOT image_width since we may have scale_denom <> 1
-  int scanline_bytes = cinfop->output_width * 3; // no padding (size 3 is fixed? )
+  int scanline_bytes = cinfop->output_width * 3; // no padding (size 3 is fixed?)
   for(i=0; i<clines; i++){
-    jpeg_read_scanlines( cinfop, row, 1 );
+    jpeg_read_scanlines(cinfop, row, 1);
     row[0] += scanline_bytes;
   }
-  CAMLreturn0;
+  CAMLreturn(Val_unit);
 }
 
-value close_jpeg_file_for_read( jpegh )
-     value jpegh;
-{
+CAMLprim value close_jpeg_file_for_read(value jpegh) {
   CAMLparam1(jpegh);
 
   struct jpeg_decompress_struct *cinfop;
@@ -434,26 +415,26 @@ value close_jpeg_file_for_read( jpegh )
   fflush(stderr);
 #endif
 
-  cinfop = (struct jpeg_decompress_struct *) Field( jpegh, 0 );
-  infile = (FILE *) Field( jpegh, 1 );
-  jerrp = (struct my_error_mgr *) Field( jpegh, 2 );
+  cinfop = (struct jpeg_decompress_struct *) Field(jpegh, 0);
+  infile = (FILE *) Field(jpegh, 1);
+  jerrp = (struct my_error_mgr *) Field(jpegh, 2);
 
 #ifdef DEBUG_JPEG
   fprintf(stderr, "cinfop= %d infile= %d %d %d \n", cinfop, infile, cinfop->output_scanline, cinfop->output_height); 
 #endif
 
-  if( cinfop->output_scanline >= cinfop->output_height ){ 
+  if(cinfop->output_scanline >= cinfop->output_height){ 
 #ifdef DEBUG_JPEG
     fprintf(stderr, "finish\n");
     fflush(stderr);
 #endif
-    jpeg_finish_decompress( cinfop );
+    jpeg_finish_decompress(cinfop);
   }
 #ifdef DEBUG_JPEG
   fprintf(stderr, "destroy\n");
   fflush(stderr);
 #endif
-  jpeg_destroy_decompress( cinfop ); 
+  jpeg_destroy_decompress(cinfop); 
   
   free(cinfop);
   free(jerrp);

@@ -2,7 +2,7 @@
 /*                                                                     */
 /*                           Objective Caml                            */
 /*                                                                     */
-/*            François Pessaux, projet Cristal, INRIA Rocquencourt     */
+/*            Franois Pessaux, projet Cristal, INRIA Rocquencourt     */
 /*            Pierre Weis, projet Cristal, INRIA Rocquencourt          */
 /*            Jun Furuse, projet Cristal, INRIA Rocquencourt           */
 /*                                                                     */
@@ -11,9 +11,6 @@
 /*  Distributed only by permission.                                    */
 /*                                                                     */
 /***********************************************************************/
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include <caml/mlvalues.h>
 #include <caml/alloc.h>
@@ -21,7 +18,9 @@
 #include <caml/fail.h>
 
 /* These are defined in caml/config.h */
+#undef int16
 #define int16 int16tiff
+#undef uint16
 #define uint16 uint16tiff
 #define int32 int32tiff
 #define uint32 uint32tiff
@@ -34,26 +33,27 @@
 #undef uint16
 #undef int32
 #undef uint32
+#undef int64
+#undef uint64
 
 extern value *imglib_error;
 
-value open_tiff_file_for_write( value file,
-			        value width,
-			        value height,
-			        value resolution )
-{
+CAMLprim value open_tiff_file_for_write(value file,
+                                        value width,
+                                        value height,
+                                        value resolution) {
   CAMLparam4(file,width,height,resolution);
   int image_width;
   int image_height;
   double res;
   TIFF* tif;
 
-  image_width = Int_val( width );
-  image_height = Int_val( height );
-  res = Double_val( resolution );
+  image_width = Int_val(width);
+  image_height = Int_val(height);
+  res = Double_val(resolution);
 
-  tif = TIFFOpen(String_val( file ), "w");
-  if( tif ){
+  tif = TIFFOpen(String_val(file), "w");
+  if(tif){
     /* needs */
     /* Resolution */
     /* FillOrder */
@@ -73,17 +73,13 @@ value open_tiff_file_for_write( value file,
     TIFFSetField(tif, TIFFTAG_XRESOLUTION, res);
     TIFFSetField(tif, TIFFTAG_YRESOLUTION, res);
 
-    CAMLreturn( (value) tif);
+    CAMLreturn((value) tif);
   } else {
     failwith("failed to open tiff file to write");
   }
 }
 
-value write_tiff_scanline( tiffh, buf, row )
-     value tiffh;
-     value buf;
-     value row;
-{
+CAMLprim value write_tiff_scanline(value tiffh, value buf, value row) {
   CAMLparam3(tiffh,buf,row);
   TIFFWriteScanline((TIFF*)tiffh, String_val(buf), Int_val(row), 0);
   CAMLreturn(Val_unit);
