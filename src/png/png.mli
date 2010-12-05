@@ -13,8 +13,6 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: png.mli,v 1.2 2008-10-31 08:51:46 weis Exp $ *)
-
 val check_header : string -> Images.header;;
   (** Checks the file header of a png image. *)
 
@@ -28,3 +26,5 @@ val write_image : Unix.file_descr -> Images.t -> unit;;
 
 val save : string -> Images.save_option list -> Images.t -> unit;;
   (** Saves an image into a png file format. *)
+
+val to_string : Images.t -> string

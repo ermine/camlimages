@@ -13,8 +13,6 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: png.ml,v 1.7 2009-07-04 03:39:28 furuse Exp $ *)
-
 open Images;;
 
 (* do not change the ordering, since the tags are used in png*.c *)
@@ -39,6 +37,11 @@ external write_index : Unix.file_descr ->
   string -> rgb array -> int -> int -> unit
   = "write_png_file_index"
 ;;
+external write_rgb_to_buffer : string -> int -> int -> bool -> string
+  = "write_png_rgb_to_buffer"
+;;
+external write_index_to_buffer : string -> rgb array -> int -> int -> string
+  = "write_png_index_to_buffer"
 
 let load_as_rgb24 name _opts =
   let w, h, buf = read_as_rgb24 name in
@@ -91,6 +94,24 @@ let save name _opts image =
     write_image fd image
 
 ;;
+
+let to_string image =
+  match image with
+    | Rgb24 bmp ->
+        write_rgb_to_buffer
+          (Rgb24.dump bmp) bmp.Rgb24.width bmp.Rgb24.height false
+    | Rgba32 bmp ->
+        write_rgb_to_buffer
+          (Rgba32.dump bmp) bmp.Rgba32.width bmp.Rgba32.height true
+    | Index8 bmp ->
+        write_index_to_buffer (Index8.dump bmp) bmp.Index8.colormap.map
+          bmp.Index8.width bmp.Index8.height
+    | Index16 bmp ->
+        write_index_to_buffer (Index16.dump bmp)
+          bmp.Index16.colormap.map
+          bmp.Index16.width bmp.Index16.height
+    | Cmyk32 _ -> failwith "Saving of CMYK not supported yet"
+;;  
 
 let check_header filename =
   let len = 24 in
