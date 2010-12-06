@@ -56,7 +56,7 @@ Flag xpm
 Library camlimages
   Path:       src/core
   BuildTools: ocamlbuild
-  Modules:    Camlimages
+  BuildDepends: unix
   Modules: 
     Camlimages,
     Mstring,
@@ -124,7 +124,7 @@ Library "camlimages-png"
   FindlibName: png
   FindlibParent: camlimages
   XMETADescription: PNG Support for CamlImages
-  Builddepends: camlimages, unix
+  Builddepends: camlimages
   Path: src/png
   Modules: Png, OPng
   CSources: oversized.h, pngread.c, pngwrite.c

@@ -2,7 +2,7 @@
 (*                                                                     *)
 (*                           Objective Caml                            *)
 (*                                                                     *)
-(*            François Pessaux, projet Cristal, INRIA Rocquencourt     *)
+(*            Franois Pessaux, projet Cristal, INRIA Rocquencourt     *)
 (*            Pierre Weis, projet Cristal, INRIA Rocquencourt          *)
 (*            Jun Furuse, projet Cristal, INRIA Rocquencourt           *)
 (*                                                                     *)
@@ -11,8 +11,6 @@
 (*  Distributed only by permission.                                    *)
 (*                                                                     *)
 (***********************************************************************)
-
-(* $Id: tiff.ml,v 1.2 2008-06-16 22:35:42 furuse Exp $ *)
 
 open Images;;
 open Rgb24;;
@@ -125,11 +123,14 @@ let check_header filename =
       Pervasives.close_in ic;
       raise Wrong_file_type;;
 
-add_methods Tiff
-  { check_header = check_header;
-    load = Some load;
-    save = Some save;
-    load_sequence = None;
-    save_sequence = None;
-};;
+let _ = 
+  add_methods Tiff
+    { check_header = check_header;
+      load = Some load;
+      save = Some save;
+      write_image = None;
+      to_string = None;
+      load_sequence = None;
+      save_sequence = None;
+    };;
 

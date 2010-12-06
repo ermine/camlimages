@@ -2,7 +2,7 @@
 (*                                                                     *)
 (*                           Objective Caml                            *)
 (*                                                                     *)
-(*            François Pessaux, projet Cristal, INRIA Rocquencourt     *)
+(*            Franois Pessaux, projet Cristal, INRIA Rocquencourt     *)
 (*            Pierre Weis, projet Cristal, INRIA Rocquencourt          *)
 (*            Jun Furuse, projet Cristal, INRIA Rocquencourt           *)
 (*                                                                     *)
@@ -149,6 +149,8 @@ type format_methods = {
     check_header: (string -> header);
     load: (string -> load_option list -> t) option;
     save: (string -> save_option list -> t -> unit) option;
+    write_image: (Unix.file_descr -> save_option list -> t -> unit) option;
+    to_string: (save_option list -> t -> string) option;
     load_sequence: (string -> load_option list -> sequence) option;
     save_sequence: (string -> save_option list -> sequence -> unit) option;
   };;
@@ -174,6 +176,11 @@ val save : string -> format option -> save_option list -> t -> unit;;
      You can specify some saving parameters [options]. Some options are
      specific to some image formats and do not work with the others. *)
 
+val write_image :
+  Unix.file_descr -> format -> save_option list -> t -> unit
+
+val to_string : format -> save_option list -> t -> string
+  
 val load_sequence : string -> load_option list -> sequence;;
 val save_sequence :
   string -> format option -> save_option list -> sequence -> unit;;

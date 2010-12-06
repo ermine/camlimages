@@ -52,6 +52,9 @@ class type oimage = object
   method dump : string
 
   method save : string -> format option -> save_option list -> unit
+  method write_image :
+    Unix.file_descr -> format -> save_option list -> unit
+  method to_string : format -> save_option list -> string
 
   method coerce : oimage
 
@@ -76,6 +79,9 @@ class virtual oimage_impl = object (self)
   method virtual dump : string
 
   method virtual save : string -> format option -> save_option list -> unit
+  method virtual write_image :
+    Unix.file_descr -> format -> save_option list -> unit
+  method virtual to_string : format -> save_option list -> string
 
   method coerce = (self :> < image : _;
 		             image_class : _;
@@ -86,6 +92,8 @@ class virtual oimage_impl = object (self)
 		             destroy : _;
 		             dump : _;
 		             save : _;
+                 write_image : _;
+                 to_string : _;
 		             coerce : _;
 		             blocks : _;
 			     dump_block : _>)
@@ -144,6 +152,9 @@ class rgba32_wrapper img = object
   method resize prog nw nh = new rgba32_wrapper (Rgba32.resize prog img nw nh)
 
   method save name format opts = Images.save name format opts (Rgba32 img)
+  method write_image fd format opts =
+    Images.write_image fd format opts (Rgba32 img)
+  method to_string format opts = Images.to_string format opts (Rgba32 img)
 
   method to_rgb24 = new rgb24_wrapper (Rgb24.of_rgba32 img)
 
@@ -178,6 +189,9 @@ and rgb24_wrapper img = object
   method resize prog nw nh = new rgb24_wrapper (resize prog img nw nh)
 
   method save name format opts = Images.save name format opts (Rgb24 img)
+  method write_image fd format opts =
+    Images.write_image fd format opts (Rgb24 img)
+  method to_string format opts = Images.to_string format opts (Rgb24 img)
 
   method to_rgba32 = new rgba32_wrapper (Rgb24.to_rgba32 img)
 
@@ -259,6 +273,9 @@ class index8_wrapper img = object (self)
     Images.blit (Index8 img) sx sy dst#image
 
   method save name format opts = Images.save name format opts (Index8 img)
+  method write_image fd format opts =
+    Images.write_image fd format opts (Index8 img)
+  method to_string format opts = Images.to_string format opts (Index8 img)
 
   method to_rgb24 = new rgb24_wrapper (Index8.to_rgb24 img)
   method to_rgba32 = new rgba32_wrapper (Index8.to_rgba32 img)
@@ -332,6 +349,9 @@ class index16_wrapper img = object (self)
   method to_rgba32 = new rgba32_wrapper (Index16.to_rgba32 img)
 
   method save name format opts = Images.save name format opts (Index16 img)
+  method write_image fd format opts =
+    Images.write_image fd format opts (Index16 img)
+  method to_string format opts = Images.to_string format opts (Index16 img)
 
   method blocks = Index16.blocks img
   method dump_block = Index16.dump_block img
@@ -387,6 +407,9 @@ class cmyk32_wrapper img = object
   method resize prog nw nh = new cmyk32_wrapper (resize prog img nw nh)
 
   method save name format opts = Images.save name format opts (Cmyk32 img)
+  method write_image fd format opts =
+    Images.write_image fd format opts (Cmyk32 img)
+  method to_string format opts = Images.to_string format opts (Cmyk32 img)
 
   method blocks = Cmyk32.blocks img
   method dump_block = Cmyk32.dump_block img

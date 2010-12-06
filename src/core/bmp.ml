@@ -2,7 +2,7 @@
 (*                                                                     *)
 (*                           Objective Caml                            *)
 (*                                                                     *)
-(*            François Pessaux, projet Cristal, INRIA Rocquencourt     *)
+(*            Franois Pessaux, projet Cristal, INRIA Rocquencourt     *)
 (*            Pierre Weis, projet Cristal, INRIA Rocquencourt          *)
 (*            Jun Furuse, projet Cristal, INRIA Rocquencourt           *)
 (*                                                                     *)
@@ -11,8 +11,6 @@
 (*  Distributed only by permission.                                    *)
 (*                                                                     *)
 (***********************************************************************)
-
-(* $Id: bmp.ml,v 1.3 2009-02-08 14:59:17 weis Exp $ *)
 
 (* Loading and saving image in the bmp format. *)
 
@@ -962,20 +960,31 @@ let write_bmp oc = function
 ;;
 
 let write_bmp_file fname bmp =
- let oc = open_out_bin fname in
- write_bmp oc bmp;
- close_out oc;
+  let oc = open_out_bin fname in
+    write_bmp oc bmp;
+    close_out oc;
 ;;
 
 let save fname _opts img = write_bmp_file fname (bmp_of_image img);;
 
-add_methods Bmp
- { check_header = check_header;
-   load = Some load;
-   save = Some save;
-   load_sequence = None;
-   save_sequence = None;
- }
+let write_image fd _opts img =
+  let oc = Unix.out_channel_of_descr fd in
+    write_bmp oc (bmp_of_image img);
+    close_out oc
+
+let to_string img =
+  failwith "Bmp.to_string not implemented yet"
+
+let _ =
+  add_methods Bmp
+    { check_header = check_header;
+      load = Some load;
+      save = Some save;
+      write_image = Some write_image;
+      to_string = None;
+      load_sequence = None;
+      save_sequence = None;
+    }
 ;;
 
 let save_bmp = write_bmp_file

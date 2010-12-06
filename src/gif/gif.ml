@@ -2,7 +2,7 @@
 (*                                                                     *)
 (*                           Objective Caml                            *)
 (*                                                                     *)
-(*            François Pessaux, projet Cristal, INRIA Rocquencourt     *)
+(*            Franois Pessaux, projet Cristal, INRIA Rocquencourt     *)
 (*            Pierre Weis, projet Cristal, INRIA Rocquencourt          *)
 (*            Jun Furuse, projet Cristal, INRIA Rocquencourt           *)
 (*                                                                     *)
@@ -11,8 +11,6 @@
 (*  Distributed only by permission.                                    *)
 (*                                                                     *)
 (***********************************************************************)
-
-(* $Id: gif.ml,v 1.2 2008-06-16 22:35:42 furuse Exp $ *)
 
 open Images;;
 open Index8;;
@@ -471,10 +469,13 @@ let check_header filename =
       close_in ic;
       raise Wrong_file_type;;
 
-add_methods Gif {
-  check_header = check_header;
-  load = Some load_first;
-  save = Some save_image;
-  load_sequence = Some load_sequence;
-  save_sequence = None;
+let _ =
+  add_methods Gif {
+    check_header = check_header;
+    load = Some load_first;
+    save = Some save_image;
+    write_image = None;
+  to_string = None;
+    load_sequence = Some load_sequence;
+    save_sequence = None;
 };;

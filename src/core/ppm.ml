@@ -2,7 +2,7 @@
 (*                                                                     *)
 (*                           Objective Caml                            *)
 (*                                                                     *)
-(*            François Pessaux, projet Cristal, INRIA Rocquencourt     *)
+(*            Franois Pessaux, projet Cristal, INRIA Rocquencourt     *)
 (*            Pierre Weis, projet Cristal, INRIA Rocquencourt          *)
 (*            Jun Furuse, projet Cristal, INRIA Rocquencourt           *)
 (*                                                                     *)
@@ -11,8 +11,6 @@
 (*  Distributed only by permission.                                    *)
 (*                                                                     *)
 (***********************************************************************)
-
-(* $Id: ppm.ml,v 1.2 2008-06-16 22:35:42 furuse Exp $ *)
 
 (* Manipulating images in portable format: PPM, PGM, and PBM.
 
@@ -241,29 +239,30 @@ let load_ppm s =
 (* Saving images. *)
 
 let save_ppm_header _img mn oc l c =
- output_string oc (Printf.sprintf "%s\n" (string_of_magic_number mn));
- output_string oc "# CREATOR: CamlImages package\n";
- output_string oc (Printf.sprintf "%d %d\n" c l);
- if mn <> P1 && mn <> P4 then output_string oc (Printf.sprintf "%d\n" 255);;
+  output_string oc (Printf.sprintf "%s\n" (string_of_magic_number mn));
+  output_string oc "# CREATOR: CamlImages package\n";
+  output_string oc (Printf.sprintf "%d %d\n" c l);
+  if mn <> P1 && mn <> P4 then output_string oc (Printf.sprintf "%d\n" 255);;
 
 let bit_set = 1 and bit_cleared = 0;;
 
 let gen_save_raw_pbm_oc is_white img oc l c =
   save_ppm_header img P4 oc l c;
   for i = 0 to l - 1 do
-   let rec loop j bn byte =
-    if j = c then
-     if bn = 0 then () else
-      let byte = byte lsl (8 - bn) in
-      output_byte oc byte else
-    if bn = 8 then (output_byte oc byte; loop j 0 0) else
-    let color =
-      if is_white (Index8.get_rgb img j i) then bit_set else bit_cleared in
-    let new_byte = (byte lsl 1) lor color in
-    loop (j + 1) (bn + 1) new_byte
-   in
-   loop 0 0 0
- done;;
+    let rec loop j bn byte =
+      if j = c then
+        if bn = 0 then () else
+          let byte = byte lsl (8 - bn) in
+            output_byte oc byte else
+              if bn = 8 then (output_byte oc byte; loop j 0 0) else
+                let color =
+                  if is_white (Index8.get_rgb img j i) then
+                    bit_set else bit_cleared in
+                let new_byte = (byte lsl 1) lor color in
+                  loop (j + 1) (bn + 1) new_byte
+    in
+      loop 0 0 0
+  done;;
 
 (* Save a bitmap in raw form. *)
 let save_raw_pbm_oc =
@@ -335,9 +334,12 @@ let save s _ = function
   | Rgb24 t -> save_ppm s t
   | _ -> invalid_arg "Ppm.save";;
 
-add_methods Ppm
- { check_header = check_header;
-   load = Some load;
-   save = Some save;
-   load_sequence = None;
-   save_sequence = None};;
+let _ =
+  add_methods Ppm
+    { check_header = check_header;
+      load = Some load;
+      save = Some save;
+      write_image = None;
+      to_string = None;
+      load_sequence = None;
+      save_sequence = None};;

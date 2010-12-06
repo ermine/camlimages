@@ -10,8 +10,6 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: ps.ml,v 1.2 2008-06-16 22:35:42 furuse Exp $ *)
-
 open Images;;
 open Rgb24;;
 
@@ -364,10 +362,13 @@ let save file _options im =
   | Rgb24 img -> super_save file default_conf true false [img]
   | _ -> raise Wrong_image_type;;
 
-add_methods Ps
- { check_header = check_header;
-   load = Some load;
-   save = Some save;
-   load_sequence = None;
-   save_sequence = None;
+let _ =
+  add_methods Ps
+    { check_header = check_header;
+      load = Some load;
+      save = Some save;
+      write_image = None;
+      to_string = None;
+      load_sequence = None;
+      save_sequence = None;
 };;

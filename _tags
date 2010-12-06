@@ -23,9 +23,10 @@
 <src/freetype/*.cm{x,}a>: pkg_freetype2_lflags
 
 # OASIS_START
-# DO NOT EDIT (digest: 5e463078e35e89cb4d9d2f02b3caa632)
+# DO NOT EDIT (digest: 76e5e1c239c3656252ac3a460ffa3f74)
 # Library camlimages
 "src/core": include
+<src/core/*.ml{,i}>: pkg_unix
 # Library camlimages-graphic
 "src/graphic": include
 <src/graphic/*.ml{,i}>: pkg_graphics
@@ -33,22 +34,31 @@
 "src/gif": include
 <src/gif/camlimages-gif.{cma,cmxa}>: use_libcamlimages-gif
 <src/gif/*.ml{,i}>: use_camlimages
+<src/gif/*.ml{,i}>: pkg_unix
 "src/gif/gifread.c": use_camlimages
+"src/gif/gifread.c": pkg_unix
 "src/gif/gifwrite.c": use_camlimages
+"src/gif/gifwrite.c": pkg_unix
 # Library camlimages-freetype2
 "src/freetype": include
 <src/freetype/camlimages-freetype2.{cma,cmxa}>: use_libcamlimages-freetype2
 <src/freetype/*.ml{,i}>: use_camlimages
+<src/freetype/*.ml{,i}>: pkg_unix
 "src/freetype/ftintf.c": use_camlimages
+"src/freetype/ftintf.c": pkg_unix
 # Library camlimages-ps
 "src/ps": include
 <src/ps/*.ml{,i}>: use_camlimages
+<src/ps/*.ml{,i}>: pkg_unix
 # Library camlimages-xpm
 "src/xpm": include
 <src/xpm/camlimages-xpm.{cma,cmxa}>: use_libcamlimages-xpm
 <src/xpm/*.ml{,i}>: use_camlimages
+<src/xpm/*.ml{,i}>: pkg_unix
 "src/xpm/xpmread.c": use_camlimages
+"src/xpm/xpmread.c": pkg_unix
 "src/xpm/xpmwrite.c": use_camlimages
+"src/xpm/xpmwrite.c": pkg_unix
 # Library camlimages-png
 "src/png": include
 <src/png/camlimages-png.{cma,cmxa}>: use_libcamlimages-png
@@ -62,8 +72,11 @@
 "src/tiff": include
 <src/tiff/camlimages-tiff.{cma,cmxa}>: use_libcamlimages-tiff
 <src/tiff/*.ml{,i}>: use_camlimages
+<src/tiff/*.ml{,i}>: pkg_unix
 "src/tiff/tiffread.c": use_camlimages
+"src/tiff/tiffread.c": pkg_unix
 "src/tiff/tiffwrite.c": use_camlimages
+"src/tiff/tiffwrite.c": pkg_unix
 # Library camlimages-lablgtk
 "src/lablgtk": include
 <src/lablgtk/*.ml{,i}>: pkg_lablgtk
@@ -72,18 +85,23 @@
 <test/test.{native,byte}>: use_camlimages-gif
 <test/test.{native,byte}>: use_camlimages-graphic
 <test/test.{native,byte}>: use_camlimages
+<test/test.{native,byte}>: pkg_unix
 <test/test.{native,byte}>: pkg_graphics
 <test/*.ml{,i}>: use_camlimages-freetype2
 <test/*.ml{,i}>: use_camlimages-gif
 <test/*.ml{,i}>: use_camlimages-graphic
 <test/*.ml{,i}>: use_camlimages
+<test/*.ml{,i}>: pkg_unix
 <test/*.ml{,i}>: pkg_graphics
 # Library camlimages-jpeg
 "src/jpeg": include
 <src/jpeg/camlimages-jpeg.{cma,cmxa}>: use_libcamlimages-jpeg
 <src/jpeg/*.ml{,i}>: use_camlimages
+<src/jpeg/*.ml{,i}>: pkg_unix
 "src/jpeg/jpegread.c": use_camlimages
+"src/jpeg/jpegread.c": pkg_unix
 "src/jpeg/jpegwrite.c": use_camlimages
+"src/jpeg/jpegwrite.c": pkg_unix
 # Library camlimages-lablgtk2
 "src/lablgtk2": include
 <src/lablgtk2/*.ml{,i}>: pkg_lablgtk2

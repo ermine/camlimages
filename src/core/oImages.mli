@@ -10,8 +10,6 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: oImages.mli,v 1.5 2009-03-01 11:24:10 furuse Exp $ *)
-
 (** Class interface for Images *)
 
 open Images;;
@@ -55,7 +53,9 @@ class type oimage = object
   method dump : string
       
   method save : string -> format option -> save_option list -> unit
-
+  method write_image :
+    Unix.file_descr -> format -> save_option list -> unit
+  method to_string : format -> save_option list -> string
   method coerce : oimage
 
   method blocks : int * int

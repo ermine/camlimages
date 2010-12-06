@@ -2,7 +2,7 @@
 (*                                                                     *)
 (*                           Objective Caml                            *)
 (*                                                                     *)
-(*            François Pessaux, projet Cristal, INRIA Rocquencourt     *)
+(*            Franois Pessaux, projet Cristal, INRIA Rocquencourt     *)
 (*            Pierre Weis, projet Cristal, INRIA Rocquencourt          *)
 (*            Jun Furuse, projet Cristal, INRIA Rocquencourt           *)
 (*                                                                     *)
@@ -11,8 +11,6 @@
 (*  Distributed only by permission.                                    *)
 (*                                                                     *)
 (***********************************************************************)
-
-(* $Id: images.ml,v 1.3 2008-06-16 22:35:42 furuse Exp $ *)
 
 (* The image data structure definition. *)
 
@@ -188,6 +186,8 @@ type format_methods = {
     check_header: (string -> header);
     load: (string -> load_option list -> t) option;
     save: (string -> save_option list -> t -> unit) option;
+    write_image: (Unix.file_descr -> save_option list -> t -> unit) option;
+    to_string: (save_option list -> t -> string) option;
     load_sequence: (string -> load_option list -> sequence) option;
     save_sequence: (string -> save_option list -> sequence -> unit) option;
   };;
@@ -239,17 +239,30 @@ let save filename formatopt save_options t =
   try
     let format =
       match formatopt with
-      |	Some format -> format
-      |	None -> guess_format filename
+        |	Some format -> format
+        |	None -> guess_format filename
     in
     let methods = List.assoc format !methods_list in
-    match methods.save with
-      Some save -> save filename save_options t
-    | None -> raise Wrong_file_type
+      match methods.save with
+          Some save -> save filename save_options t
+        | None -> raise Wrong_file_type
   with
-  | Not_found ->
-      raise Wrong_file_type;;
+    | Not_found ->
+        raise Wrong_file_type
+;;
 
+let write_image fd format save_options t =
+  let methods = List.assoc format !methods_list in
+    match methods.write_image with
+      | Some write_image -> write_image fd save_options t
+      | None -> raise Wrong_file_type
+
+let to_string format save_options t =
+  let methods = List.assoc format !methods_list in
+    match methods.to_string with
+      | Some to_string -> to_string save_options t
+      | None -> raise Wrong_file_type
+  
 let size img =
   match img with
   | Index8 bmp -> bmp.Index8.width, bmp.Index8.height

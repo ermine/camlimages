@@ -22,9 +22,10 @@ val load : string -> Images.load_option list -> Images.t;;
 val load_as_rgb24 : string -> Images.load_option list -> Images.t;;
   (** Loads a png image, and coerce it to Rgb24. *)
 
-val write_image : Unix.file_descr -> Images.t -> unit;;
+val write_image :
+  Unix.file_descr -> Images.save_option list -> Images.t -> unit;;
 
 val save : string -> Images.save_option list -> Images.t -> unit;;
   (** Saves an image into a png file format. *)
 
-val to_string : Images.t -> string
+val to_string : Images.save_option list -> Images.t  -> string

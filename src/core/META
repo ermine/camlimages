@@ -1,7 +1,8 @@
 # OASIS_START
-# DO NOT EDIT (digest: 270a07cf6628adab6f9cd4677b9dd6cc)
+# DO NOT EDIT (digest: ad6d73814622bb5231f151b9eb932d0f)
 version = "3.0.2.1"
 description = "CamlImages - Objective Caml image processing library"
+requires = "unix"
 archive(byte) = "camlimages.cma"
 archive(native) = "camlimages.cmxa"
 exists_if = "camlimages.cma"
@@ -53,7 +54,7 @@ package "xpm" (
 package "png" (
  version = "3.0.2.1"
  description = "PNG Support for CamlImages"
- requires = "camlimages unix"
+ requires = "camlimages"
  archive(byte) = "camlimages-png.cma"
  archive(native) = "camlimages-png.cmxa"
  exists_if = "camlimages-png.cma"

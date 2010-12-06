@@ -70,7 +70,7 @@ let load name _opts =
       Index8 (Index8.create_with_scanlines w h [] { max = 16; map = cmap } (-1) buf')
 ;;
 
-let write_image fd image =
+let write_image fd _opts image =
   match image with
     | Rgb24 bmp ->
         write_rgb fd
@@ -88,14 +88,14 @@ let write_image fd image =
     | Cmyk32 _ -> failwith "Saving of CMYK not supported yet"
 ;;
 
-let save name _opts image =
+let save name opts image =
   let fd = Unix.openfile name
     [Unix.O_APPEND; Unix.O_CREAT; Unix.O_TRUNC] 0o666 in
-    write_image fd image
+    write_image fd opts image
 
 ;;
 
-let to_string image =
+let to_string _opts image =
   match image with
     | Rgb24 bmp ->
         write_rgb_to_buffer
@@ -156,12 +156,15 @@ let check_header filename =
   | _ -> close_in ic; raise Wrong_file_type
 ;;
 
-add_methods Png {
-  check_header = check_header;
-  load = Some load;
-  save = Some save;
-  load_sequence = None;
-  save_sequence = None;
-}
+let _ =
+  add_methods Png {
+    check_header = check_header;
+    load = Some load;
+    save = Some save;
+    write_image = Some write_image;
+    to_string = Some to_string;
+    load_sequence = None;
+    save_sequence = None;
+  }
 ;;
   
