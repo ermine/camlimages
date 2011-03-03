@@ -1,0 +1,7 @@
+setup.log
+setup.data
+*.byte
+*.native
+*.docdir
+_build
+src/core/camlimages.ml

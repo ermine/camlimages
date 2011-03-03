@@ -89,8 +89,7 @@ let write_image fd _opts image =
 ;;
 
 let save name opts image =
-  let fd = Unix.openfile name
-    [Unix.O_APPEND; Unix.O_CREAT; Unix.O_TRUNC] 0o666 in
+  let fd = Unix.openfile name [Unix.O_WRONLY; Unix.O_CREAT] 0o666 in
     write_image fd opts image
 
 ;;
