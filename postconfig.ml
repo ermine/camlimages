@@ -99,7 +99,7 @@ let _ =
     [enabled_freetype, "freetype2", "ft2build.h", "-lfreetype";
      enabled_png, "libpng", "png.h", "-lpng -lz";
      enabled_jpeg, "jpeg", "jpeglib.h", "-ljpeg";
-     enabled_gif, "gif", "gif_lib.h", "-lungif";
+     enabled_gif, "gif", "gif_lib.h", "-lgif";
      enabled_tiff, "tiff", "tiff.h", "-ltiff";
      enabled_xpm, "xpm", "X11/xpm.h", "-lXpm -lX11"
     ]

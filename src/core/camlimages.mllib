@@ -1,8 +1,10 @@
 # OASIS_START
-# DO NOT EDIT (digest: adf8c518b24dc21c9015a94c2d3bf973)
+# DO NOT EDIT (digest: a72b691de8bb758ead8c988db8949139)
 Camlimages
 Mstring
 Color
+Info
+Image_intf
 Region
 Tmpfile
 Bitmap

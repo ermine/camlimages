@@ -1,4 +1,4 @@
-OASISFormat: 0.2
+OASISFormat: 0.3
 Name:        camlimages
 Version:     3.0.2.1
 Synopsis:    CamlImages - Objective Caml image processing library
@@ -11,7 +11,7 @@ License:     LGPL-2.1 with OCaml linking exception
 BuildTools:  ocamlbuild
 FilesAB: src/core/camlimages.ml.ab
 PostConfCommand: ocaml unix.cma postconfig.ml $freetype2 $libpng $jpeg $gif $tiff $xpm $ps
-Plugins:     DevFiles (0.2), META (0.2), StdFiles (0.2)
+Plugins:     DevFiles (0.3), META (0.3), StdFiles (0.3)
 
 Flag gif
   Description: GIF Support
@@ -61,6 +61,8 @@ Library camlimages
     Camlimages,
     Mstring,
     Color,
+    Info,
+    Image_intf,
     Region,
     Tmpfile,
     Bitmap,
@@ -92,7 +94,6 @@ Library "camlimages-gif"
   Path: src/gif
   Modules: Gif, OGif
   CSources: oversized.h, gifread.c, gifwrite.c
-  # CCLib: -lungif
 
 Library "camlimages-tiff"
   Build$: flag(tiff)
@@ -166,7 +167,7 @@ Library "camlimages-graphic"
   BuildDepends: camlimages
   Path: src/graphic
   Modules: Graphic_image, OGraphic
-  BuildDepends: graphics
+  BuildDepends: camlimages, graphics
 
 Library "camlimages-xpm"
   Build$: flag(xpm)
@@ -191,7 +192,7 @@ Library "camlimages-lablgtk"
     Imagegdk,
     Ximage,
     OXimage
-  BuildDepends: lablgtk
+  BuildDepends: camlimages, lablgtk
 
 Library "camlimages-lablgtk2"
   Build$: flag(lablgtk2)    # && flag(pkg_lablgtk2)
@@ -205,7 +206,7 @@ Library "camlimages-lablgtk2"
     Imagegdk,
     Ximage2,
     OXimage2
-  BuildDepends: lablgtk2
+  BuildDepends: camlimages, lablgtk2
 
 Executable test
   Build$: flag(freetype2) && flag(graphic) && flag(gif)
