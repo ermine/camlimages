@@ -53,9 +53,9 @@ Flag xpm
   Description: XPM Support
   Default: true
 
-Library camlimages
+Library "camlimages-lib"
   Path:       src/core
-  BuildTools: ocamlbuild
+  FindlibName: camlimages
   BuildDepends: unix
   Modules: 
     Camlimages,
@@ -88,7 +88,7 @@ Library "camlimages-gif"
   Build$: flag(gif)
   Install$: flag(gif)
   FindlibName: gif
-  FindlibParent: camlimages
+  FindlibParent: camlimages-lib
   XMETADescription: GIF support for CamlImages
   BuildDepends: camlimages
   Path: src/gif
@@ -99,7 +99,7 @@ Library "camlimages-tiff"
   Build$: flag(tiff)
   Install$: flag(tiff)
   FindlibName: tiff
-  FindlibParent: camlimages
+  FindlibParent: camlimages-lib
   XMETADescription: TIFF Support for CamlImages
   BuildDepends: camlimages
   Path: src/tiff
@@ -111,7 +111,7 @@ Library "camlimages-jpeg"
   Build$: flag(jpeg)
   Install$: flag(jpeg)
   FindlibName: jpeg
-  FindlibParent: camlimages
+  FindlibParent: camlimages-lib
   XMETADescription: JPEG Support for CamlImages
   BuildDepends: camlimages
   Path: src/jpeg
@@ -123,7 +123,7 @@ Library "camlimages-png"
   Build$: flag(libpng)
   Install$: flag(libpng)
   FindlibName: png
-  FindlibParent: camlimages
+  FindlibParent: camlimages-lib
   XMETADescription: PNG Support for CamlImages
   Builddepends: camlimages
   Path: src/png
@@ -135,7 +135,7 @@ Library "camlimages-freetype2"
   Build$: flag(freetype2)
   Install$: flag(freetype2)
   FindlibName: freetype
-  FindlibParent: camlimages
+  FindlibParent: camlimages-lib
   XMETADescription: Freetype2 Support for CamlImages
   BuildDepends: camlimages
   Path: src/freetype
@@ -152,7 +152,7 @@ Library "camlimages-ps"
   Build$: flag(ps)
   Install$: flag(ps)
   FindlibName: ps
-  FindlibParent: camlimages
+  FindlibParent: camlimages-lib
   XMETADescription: PS Support for CamlImages
   BuildDepends: camlimages
   Path: src/ps
@@ -162,7 +162,7 @@ Library "camlimages-graphic"
   Build$: flag(graphic)   # && flag(pkg_graphics)
   Install$: flag(graphic) # && flag(pkg_graphics)
   FindlibName: graphic
-  FindlibParent: camlimages
+  FindlibParent: camlimages-lib
   XMETADescription: Ocaml Graphic Support for CamlImages
   BuildDepends: camlimages
   Path: src/graphic
@@ -173,7 +173,7 @@ Library "camlimages-xpm"
   Build$: flag(xpm)
   Install$: flag(xpm)
   FindlibName: xpm
-  FindlibParent: camlimages
+  FindlibParent: camlimages-lib
   XMETADescription: XPM Support for CamlImages
   BuildDepends: camlimages
   Path: src/xpm
@@ -185,7 +185,7 @@ Library "camlimages-lablgtk"
   Build$: flag(lablgtk)   # && flag(pkg_lablgtk)
   Install$: flag(lablgtk) # && flag(pkg_lablgtk)
   FindlibName: lablgtk
-  FindlibParent: camlimages
+  FindlibParent: camlimages-lib
   XMETADescription: lablGTK Support for CamlImages
   Path: src/lablgtk
   Modules:
@@ -198,7 +198,7 @@ Library "camlimages-lablgtk2"
   Build$: flag(lablgtk2)    # && flag(pkg_lablgtk2)
   Install$: flag(lablgtk2)  # && flag(pkg_lablgtk2)
   FindlibName: lablgtk2
-  FindlibParent: camlimages
+  FindlibParent: camlimages-lib
   XMETADescription: lablGTK2 Support for CamlImages
   BuildDepends: camlimages
   Path: src/lablgtk2

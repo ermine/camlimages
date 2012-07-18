@@ -1,13 +1,13 @@
 # OASIS_START
-# DO NOT EDIT (digest: 246ce838ee03d9d5dd19ec897e8dce2d)
+# DO NOT EDIT (digest: 8a7cee23394b0aaa5a0da7bcf85b19b7)
 version = "3.0.2.1"
 description = "CamlImages - Objective Caml image processing library"
 requires = "unix"
-archive(byte) = "camlimages.cma"
-archive(byte, plugin) = "camlimages.cma"
-archive(native) = "camlimages.cmxa"
-archive(native, plugin) = "camlimages.cmxs"
-exists_if = "camlimages.cma"
+archive(byte) = "camlimages-lib.cma"
+archive(byte, plugin) = "camlimages-lib.cma"
+archive(native) = "camlimages-lib.cmxa"
+archive(native, plugin) = "camlimages-lib.cmxs"
+exists_if = "camlimages-lib.cma"
 package "xpm" (
  version = "3.0.2.1"
  description = "XPM Support for CamlImages"
